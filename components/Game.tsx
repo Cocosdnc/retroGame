@@ -16,7 +16,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
         { id: number; type: "catch" | "avoid"; top: number; left: number; imageUrl: string }[]
     >([]);
     const [playerPosition, setPlayerPosition] = useState(50); // Percent
-    const [speed, setSpeed] = useState(5);
+    const [speed, setSpeed] = useState(3);
     const [gameStarted, setGameStarted] = useState(false);
     const [paused, setPaused] = useState(false); // Track whether the game is paused
     const playerRef = useRef<HTMLDivElement>(null);
@@ -24,7 +24,17 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
     const catchAudioRef = useRef<HTMLAudioElement>(null);
     const gameoverAudioRef = useRef<HTMLAudioElement>(null);
     const [previousVolume, setPreviousVolume] = useState(0.5);
-
+    const isMobile = () => {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+    };
+    useEffect(() => {
+        if (isMobile()) {
+            setSpeed(1.5); // Slower speed for mobile
+        } else {
+            setSpeed(3); // Default speed for desktop
+        }
+    }, []);
+    
     const toggleMute = () => {
         if (backgroundAudioRef.current) {
             if (backgroundAudioRef.current.volume > 0) {
