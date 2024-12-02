@@ -22,9 +22,10 @@ export async function POST(
         where: { champion:champion },
         orderBy: { score: 'desc' }
     });
-    if (!score){
-        return null
+    if (score.length === 0) {
+        return NextResponse.json([]);
     }
+
     return NextResponse.json(score);
 
 }
