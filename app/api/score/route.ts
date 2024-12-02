@@ -21,6 +21,7 @@ export async function POST(
             score,
         }
     })
+    
     return NextResponse.json("ok");
 
 
