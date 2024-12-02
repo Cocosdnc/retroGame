@@ -27,6 +27,30 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
     const isMobile = () => {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
     };
+    const handleMouseMove = (e: MouseEvent) => {
+        if (!gameAreaRef.current) return;
+
+        const gameAreaRect = gameAreaRef.current.getBoundingClientRect();
+        const mouseX = e.clientX;
+
+        // Calculate new position as a percentage
+        const newPosition = ((mouseX - gameAreaRect.left) / gameAreaRect.width) * 100;
+
+        // Clamp the position between 0 and 100
+        setPlayerPosition(Math.max(0, Math.min(100, newPosition)));
+    };
+    useEffect(() => {
+        if (gameStarted) {
+            // Add mousemove event listener when the game starts
+            window.addEventListener("mousemove", handleMouseMove);
+        }
+
+        return () => {
+            // Cleanup event listener when the game stops
+            window.removeEventListener("mousemove", handleMouseMove);
+        };
+    }, [gameStarted]);
+
     useEffect(() => {
         if (isMobile()) {
             setSpeed(1.5); // Slower speed for mobile
@@ -215,7 +239,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
         setScore(0);
         setGameOver(false);
         setElements([]);
-        setSpeed(5);
+        setSpeed(3);
         setGameStarted(false);
         setPaused(false); // Reset pause state on restart
         backgroundAudioRef.current?.pause();
