@@ -274,7 +274,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
     useEffect(() => {
         if (gameStarted && !paused) {
             const speedInterval = setInterval(() => {
-                setSpeed((prev) => Math.min(prev + 1, 20)); // Cap speed at 20
+                setSpeed((prev) => Math.min(prev + 1, 40)); // Cap speed at 20
             }, 10000);
 
             return () => clearInterval(speedInterval);
@@ -287,7 +287,13 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
         setScore(0);
         setGameOver(false);
         setElements([]);
-        setSpeed(3);
+        if (isMobile()) {
+            setSpeed(0.5); // Slower speed for mobile
+            setPopFrequency(800)
+        } else {
+            setSpeed(3); // Default speed for desktop
+            setPopFrequency(200)
+        }
         setGameStarted(false);
         setPaused(false); // Reset pause state on restart
         backgroundAudioRef.current?.pause();
