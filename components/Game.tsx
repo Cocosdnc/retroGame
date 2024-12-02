@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { Settings, Volume2, VolumeOff } from "lucide-react";
+import ky from 'ky';
+import { Settings, Trophy, Volume2, VolumeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-import ky from 'ky';
 interface GameProps {
     greenBoxImageUrls: string[];
 }
@@ -44,24 +44,28 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
         }
     };
 
-    const fetchScores = () => {
-        // Fetch scores from the API
-        ky.post('/api/score', {
-            json: { champion: "JacquesLalie" }, // The data to send
-        })
-            .then((data) => {
-                setScores(data); // Set the scores state with fetched data
-            })
-            .catch((err) => {
-                console.error('Error fetching scores:', err); // Handle any errors that occur
-            })
-            .finally(() => {
-                // Optionally, set loading state to false or do any cleanup
-            });
-    };
-    
     useEffect(() => {
-        fetchScores(); // Call the fetchScores function
+        fetch('/api/score/champion', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ champion: 'jacqueslalie' }),
+        })
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then((data) => {
+            if (data) {
+                setScores(data);
+            }
+        })
+        .catch((error) => {
+            console.error('Error fetching scores:', error);
+        });
     }, []);
 
     const isMobile = () => {
@@ -149,7 +153,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                     }))
                 );
             }, 5);
-
+            setPopFrequency(prev=>prev+5)
             return () => clearInterval(moveInterval);
         }
     }, [gameStarted, speed, paused]);
@@ -368,7 +372,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                 </div>
             )}
             {gameOver && (
-                <div className="absolute w-full max-w-[600px] h-96 shadow-lg bg-zinc-800 border-[1px] border-white p-4 flex flex-col items-center rounded-md border-zinc 400 top-1/2 z-10 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-2xl">
+                <div className="absolute w-full max-w-[600px] h-fit shadow-lg bg-zinc-800 border-[1px] border-white p-4 flex flex-col items-center rounded-md border-zinc 400 top-1/2 z-10 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-2xl">
                     <div className="font-bold text-red-600 text-2xl">Game Over</div>
                     <h1>Votre score: {score}</h1>
                     <div className="mt-4 gap-4 flex">
@@ -379,31 +383,28 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                             Quitter
                         </button>
                     </div>
-                    <div>
-                        {/* Display the fetched score */}
+                    <div className="text-sm mt-3">
+                        <p className="text-md font-semibold">Meilleurs scores</p>
                         {scores.length > 0 ? (
-                            scores.map((score: any) => (
+                            scores?.slice(0, 3).map((score: any) => (
                                 <div key={score.pseudo}>
-                                    <p>Pseudo: {score.pseudo}</p>
-                                    <p>Champion: {score.champion}</p>
-                                    <p>Score: {score.score}</p>
-                                    <p>Created At: {new Date(score.createdAt).toLocaleString()}</p>
+                                        <p className="flex flex-row gap-2"><Trophy className="size-4"/> {score.pseudo}: {score.score} pts</p>
                                 </div>
                             ))
                         ) : (
                             <p>No scores found.</p>
                         )}
                     </div>
-                    <div className="mt-8 border-t-2 border-white pt-4 flex flex-col text-md justify-center items-center">
+                    <div className="mt-6 border-t-2 border-white pt-4 flex flex-col text-md justify-center items-center">
                         Enregistrez votre score
                         <input
-                            className="border-2 rounded-md p-2"
+                            className="border-2 rounded-md p-2 text-black"
                             placeholder="Votre pseudo"
                             value={pseudo} // Bind input value to state
                             onChange={(e) => setPseudo(e.target.value)} // Update state on input change
                         />
                         <button
-                            onClick={() => sendScore({ pseudo, champion: "JacquesLile", score })} // Send the state values
+                            onClick={() => sendScore({ pseudo, champion: "jacqueslalie", score })} // Send the state values
                             className="mt-2 p-2 bg-green-500 rounded"
                         >
                             Enregistrer

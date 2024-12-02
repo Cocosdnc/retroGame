@@ -14,8 +14,9 @@ datasource db {
 }
 
 model Score {
-  pseudo    String   @id @default(auto()) @map("_id") @db.ObjectId
-  champion  String   @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  pseudo    String
+  champion  String  
   score     Int
   createdAt DateTime @default(now())
 

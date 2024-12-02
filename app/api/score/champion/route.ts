@@ -19,10 +19,12 @@ export async function POST(
 
 
     const score = await prisma.score.findMany({
-        where: { champion },
-        orderBy: { createdAt: 'desc' }
+        where: { champion:champion },
+        orderBy: { score: 'desc' }
     });
-
+    if (!score){
+        return null
+    }
     return NextResponse.json(score);
 
 }
