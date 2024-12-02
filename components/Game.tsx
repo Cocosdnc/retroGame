@@ -45,27 +45,29 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
     };
 
     useEffect(() => {
-        fetch('/api/score/champion', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ champion: 'jacqueslalie' }),
-        })
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then((data) => {
-            if (data) {
+        const fetchScores = async () => {
+            try {
+                const response = await fetch('/api/score/champion', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ champion: 'jacqueslalie' }),
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Network response was not ok: ${response.status} - ${errorText}`);
+                }
+
+                const data = await response.json();
                 setScores(data);
+            } catch (error) {
+                console.error('Error fetching scores:', error);
             }
-        })
-        .catch((error) => {
-            console.error('Error fetching scores:', error);
-        });
+        };
+
+        fetchScores();
     }, []);
 
     const isMobile = () => {
