@@ -100,7 +100,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
     useEffect(() => {
         if (isMobile()) {
             setSpeed(0.5); // Slower speed for mobile
-            setPopFrequency(100)
+            setPopFrequency(800)
         } else {
             setSpeed(3); // Default speed for desktop
             setPopFrequency(200)
@@ -155,7 +155,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                     }))
                 );
             }, 5);
-            setPopFrequency(prev=>prev+5)
+            setPopFrequency(prev=>prev-5)
             return () => clearInterval(moveInterval);
         }
     }, [gameStarted, speed, paused]);
@@ -423,7 +423,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
                     ref={playerRef}
-                    className="absolute bottom-4 w-20 h-20 xs:w-12 xs:h-12 bg-cover"
+                    className="absolute bottom-4 w-20 h-20 sm:w-14 sm:h-14 bg-cover"
                     style={{
                         left: `${playerPosition}%`,
                         transform: "translateX(-50%)",
@@ -433,7 +433,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                 {elements.map((element) => (
                     <div
                         key={element.id}
-                        className="absolute w-20 h-20 xs:w-12 xs:h-12 bg-cover"
+                        className="absolute w-20 h-20 sm:w-14 sm:h-14 bg-cover"
                         style={{
                             top: `${element.top}%`,
                             left: `${element.left}%`,
