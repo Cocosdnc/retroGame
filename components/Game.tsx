@@ -53,7 +53,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
 
     useEffect(() => {
         if (isMobile()) {
-            setSpeed(1.5); // Slower speed for mobile
+            setSpeed(0.5); // Slower speed for mobile
         } else {
             setSpeed(3); // Default speed for desktop
         }
@@ -356,7 +356,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                     onTouchStart={handleTouchStart}
                     onTouchMove={handleTouchMove}
                     ref={playerRef}
-                    className="absolute bottom-4 w-20 h-20 bg-cover"
+                    className="absolute bottom-4 w-20 h-20 sm:w-12 sm:h-12 bg-cover"
                     style={{
                         left: `${playerPosition}%`,
                         transform: "translateX(-50%)",
@@ -366,7 +366,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                 {elements.map((element) => (
                     <div
                         key={element.id}
-                        className="absolute w-20 h-20 bg-cover"
+                        className="absolute w-20 h-20 sm:w-12 sm:h-12 bg-cover"
                         style={{
                             top: `${element.top}%`,
                             left: `${element.left}%`,
