@@ -11,7 +11,7 @@ export async function POST(
     request: Request, //obligatoire 
     { params }: { params: IParams }
 ) {
-
+    const body =request.json()
     const { champion } = params;
     if (!champion || typeof champion !== 'string') {
         throw new Error('Invalid ID');

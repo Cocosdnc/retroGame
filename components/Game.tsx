@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { Settings, Volume2, VolumeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
-
+import ky from 'ky';
 interface GameProps {
     greenBoxImageUrls: string[];
 }
@@ -11,7 +12,7 @@ interface GameProps {
 const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
     const router = useRouter();
     const [score, setScore] = useState(0);
-    const [popFrequency,setPopFrequency]=useState(200)
+    const [popFrequency, setPopFrequency] = useState(200)
     const [gameOver, setGameOver] = useState(false);
     const [elements, setElements] = useState<
         { id: number; type: "catch" | "avoid"; top: number; left: number; imageUrl: string }[]
@@ -25,6 +26,43 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
     const catchAudioRef = useRef<HTMLAudioElement>(null);
     const gameoverAudioRef = useRef<HTMLAudioElement>(null);
     const [previousVolume, setPreviousVolume] = useState(0.5);
+    const [scores, setScores] = useState<any>()
+    const [pseudo, setPseudo] = useState(""); // Track the pseudo input
+    // const [loading, setLoading] = useState<boolean>(false); // To track loading state
+    const sendScore = async (scoreData: { pseudo: string; champion: string; score: number }) => {
+        try {
+            // Making a POST request to the server using Ky
+            const response = await ky.post('/api/score', {
+                json: scoreData, // The data to send
+            });
+
+            // If the response is successful, parse the JSON
+            const data = await response.json();
+            console.log('Score successfully submitted:', data);
+        } catch (error) {
+            console.error('Error submitting score:', error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchScores = async () => {
+            try {
+                // Fetch scores from the API
+                const response = await fetch("/api/scores");
+                if (!response.ok) {
+                    throw new Error("Failed to fetch scores");
+                }
+                const data = await response.json();
+                setScores(data); // Set the scores state with fetched data
+            } catch (err) {
+                console.error(err);
+            } finally {
+                // setLoading(false); // Set loading to false when the request is complete
+            }
+        };
+
+        fetchScores(); // Call the fetchScores function
+    }, [])
     const isMobile = () => {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
     };
@@ -61,7 +99,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
             setPopFrequency(200)
         }
     }, []);
-    
+
     const toggleMute = () => {
         if (backgroundAudioRef.current) {
             if (backgroundAudioRef.current.volume > 0) {
@@ -300,7 +338,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                 <div className="absolute shadow-md bg-zinc-800 border-[1px] border-white p-4 flex flex-col items-center rounded-md border-zinc 400 top-1/2 z-10 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-2xl">
                     <div>Paused</div>
                     <button onClick={toggleMute} className="mt-4 p-2 bg-gray-500 text-white rounded">
-                        {backgroundAudioRef.current&&backgroundAudioRef.current?.volume > 0 ? <VolumeOff /> : <Volume2 />}
+                        {backgroundAudioRef.current && backgroundAudioRef.current?.volume > 0 ? <VolumeOff /> : <Volume2 />}
                     </button>
                     <div>
 
@@ -340,11 +378,33 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                             Quitter
                         </button>
                     </div>
-
-                    <div className="mt-8 border-t-2 border-white pt-4 flex flex-col text-md justify-center items-center"> 
+                    <div>
+                        {/* Display the fetched score */}
+                        {scores.length > 0 ? (
+                            scores.map((score: any) => (
+                                <div key={score.pseudo}>
+                                    <p>Pseudo: {score.pseudo}</p>
+                                    <p>Champion: {score.champion}</p>
+                                    <p>Score: {score.score}</p>
+                                    <p>Created At: {new Date(score.createdAt).toLocaleString()}</p>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No scores found.</p>
+                        )}
+                    </div>
+                    <div className="mt-8 border-t-2 border-white pt-4 flex flex-col text-md justify-center items-center">
                         Enregistrez votre score
-                        <input className="border-2 rounded-md p-2" placeholder="Votre pseudo"/>
-                        <button onClick={()=>{}} className="mt-2 p-2 bg-green-500 rounded">
+                        <input
+                            className="border-2 rounded-md p-2"
+                            placeholder="Votre pseudo"
+                            value={pseudo} // Bind input value to state
+                            onChange={(e) => setPseudo(e.target.value)} // Update state on input change
+                        />
+                        <button
+                            onClick={() => sendScore({ pseudo, champion: "JacquesLile", score })} // Send the state values
+                            className="mt-2 p-2 bg-green-500 rounded"
+                        >
                             Enregistrer
                         </button>
                     </div>
