@@ -2,13 +2,11 @@ import { NextResponse } from "next/server";
 import prisma from "@/app/libs/prismadb";
 
 interface IParams {
-    champion?: string;
+    champion: string;
 }
 
 export async function POST(request: Request, { params }: { params: IParams }) {
     try {
-        // Parse the request body
-        const body = await request.json();
         const { champion } = params; // Destructure from params
 
         // Check if the 'champion' is valid

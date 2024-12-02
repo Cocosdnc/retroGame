@@ -9,7 +9,6 @@ export async function POST(
     const body = await request.json();
     const {
         pseudo,
-        createdAt,
         champion,
         score,
     } = body;
@@ -17,7 +16,6 @@ export async function POST(
     await prisma.score.create({
         data: {
             pseudo,
-            createdAt,
             champion,
             score,
         }

@@ -45,24 +45,29 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
     };
 
     useEffect(() => {
-        const fetchScores = async () => {
-            try {
-                // Fetch scores from the API
-                const response = await fetch("/api/scores");
-                if (!response.ok) {
-                    throw new Error("Failed to fetch scores");
-                }
-                const data = await response.json();
-                setScores(data); // Set the scores state with fetched data
-            } catch (err) {
-                console.error(err);
-            } finally {
-                // setLoading(false); // Set loading to false when the request is complete
-            }
+        const fetchScores = () => {
+            // Fetch scores from the API
+            fetch("/api/scores")
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch scores");
+                    }
+                    return response.json(); // Return the parsed JSON if the response is ok
+                })
+                .then((data) => {
+                    setScores(data); // Set the scores state with fetched data
+                })
+                .catch((err) => {
+                    console.error(err); // Handle any errors that occur
+                })
+                .finally(() => {
+                    // Optionally, set loading state to false or do any cleanup
+                });
         };
-
+    
         fetchScores(); // Call the fetchScores function
-    }, [])
+    }, []);
+    
     const isMobile = () => {
         return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
     };
