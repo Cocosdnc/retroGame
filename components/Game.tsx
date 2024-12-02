@@ -143,7 +143,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
 
             return () => clearInterval(interval);
         }
-    }, [gameStarted, paused, greenBoxImageUrls]);
+    }, [gameStarted, paused, greenBoxImageUrls,popFrequency]);
 
     useEffect(() => {
         if (gameStarted && !paused) {
