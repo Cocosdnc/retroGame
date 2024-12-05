@@ -1,4 +1,5 @@
 'use client'
+import { OctagonX } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
@@ -8,16 +9,19 @@ interface CardProps{
     name:string,
     audio:string,
     description?:string
+    disabled?:boolean
 }
 const Card:React.FC<CardProps> = ({
-    link, name,description,
+    link, name,description,disabled
 }) => {
 
   return (
     <Link 
-        href={link} className='border transition hover:scale-110 bg-black 
+        href={link} 
+        className={`border transition hover:scale-110 bg-black 
         rounded-md w-60 h-60 border-zinc-300 overflow-hidden flex flex-col justify-between
-        items-center gap-0.5 text-white'>
+        items-center gap-0.5 text-white
+        ${disabled? "opacity-60 pointer-events-none ":""}`}>
 
         <Image
             alt=""
@@ -27,7 +31,8 @@ const Card:React.FC<CardProps> = ({
             src={`${link}.png`}
             />
         <h1 className='font-semibold text-lg'>{name}</h1>
-        <p className='text-md'>{description}</p>
+        {disabled&&<OctagonX color='red' />}
+        <p className='text-md w-full text-center justify-center flex'>{description}</p>
     </Link>
   )
 }
