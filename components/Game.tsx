@@ -5,6 +5,7 @@ import ky from 'ky';
 import { Settings, Trophy, Volume2, VolumeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
+import { toast } from 'sonner';
 interface GameProps {
     greenBoxImageUrls: string[];
 }
@@ -12,7 +13,7 @@ interface GameProps {
 const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
     const router = useRouter();
     const [score, setScore] = useState(0);
-    const [popFrequency, setPopFrequency] = useState(200)
+    const [popFrequency, setPopFrequency] = useState(500)
     const [gameOver, setGameOver] = useState(false);
     const [elements, setElements] = useState<
         { id: number; type: "catch" | "avoid"; top: number; left: number; imageUrl: string }[]
@@ -42,9 +43,12 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
         } catch (error) {
             console.error('Error submitting score:', error);
         }
+        toast.success("Score enregistré")
+        restartGame()
     };
 
     useEffect(() => {
+        
         const fetchScores = async () => {
             try {
                 const response = await fetch('/api/score/champion', {
@@ -103,7 +107,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
             setPopFrequency(800)
         } else {
             setSpeed(3); // Default speed for desktop
-            setPopFrequency(200)
+            setPopFrequency(500)
         }
     }, []);
 
@@ -155,7 +159,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                     }))
                 );
             }, 5);
-            setPopFrequency(prev=>prev-5)
+            setPopFrequency(prev=>prev*0.8)
             return () => clearInterval(moveInterval);
         }
     }, [gameStarted, speed, paused]);
@@ -292,7 +296,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
             setPopFrequency(800)
         } else {
             setSpeed(3); // Default speed for desktop
-            setPopFrequency(200)
+            setPopFrequency(500)
         }
         setGameStarted(false);
         setPaused(false); // Reset pause state on restart
