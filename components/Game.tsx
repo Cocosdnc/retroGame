@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+
 import ky from 'ky';
 import { Settings, Trophy, Volume2, VolumeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
