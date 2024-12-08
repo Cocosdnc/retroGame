@@ -6,7 +6,7 @@ import { Settings, Trophy, Volume2, VolumeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from 'sonner';
-import { Oval } from 'react-loader-spinner'
+import {Spinner} from "@nextui-org/spinner";
 
 interface GameProps {
     greenBoxImageUrls: string[];
@@ -426,15 +426,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                         >
                             Enregistrer
                         </button> :
-                            <Oval
-                                visible={true}
-                                height="80"
-                                width="80"
-                                color="#4fa94d"
-                                ariaLabel="oval-loading"
-                                wrapperStyle={{}}
-                                wrapperClass=""
-                            />
+                            <Spinner color="success" />
                         }
                     </div>
                 </div>

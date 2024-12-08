@@ -10,14 +10,17 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@nextui-org/spinner": "^2.2.4",
+    "@nextui-org/system": "^2.4.4",
+    "@nextui-org/theme": "^2.4.1",
     "@prisma/client": "^6.0.0",
+    "framer-motion": "^11.13.1",
     "ky": "^1.7.2",
     "lucide-react": "^0.462.0",
     "mongodb": "^6.11.0",
     "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",
     "react-dom": "19.0.0-rc-66855b96-20241106",
-    "react-loader-spinner": "^6.1.6",
     "sonner": "^1.7.0"
   },
   "devDependencies": {
