@@ -6,6 +6,8 @@ import { Settings, Trophy, Volume2, VolumeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { toast } from 'sonner';
+import { Oval } from 'react-loader-spinner'
+
 interface GameProps {
     greenBoxImageUrls: string[];
 }
@@ -29,8 +31,9 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
     const [previousVolume, setPreviousVolume] = useState(0.5);
     const [scores, setScores] = useState<any>()
     const [pseudo, setPseudo] = useState(""); // Track the pseudo input
-    // const [loading, setLoading] = useState<boolean>(false); // To track loading state
+    const [loading, setLoading] = useState<boolean>(false); // To track loading state
     const sendScore = async (scoreData: { pseudo: string; champion: string; score: number }) => {
+        setLoading(true)
         try {
             // Making a POST request to the server using Ky
             const response = await ky.post('/api/score', {
@@ -45,10 +48,11 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
         }
         toast.success("Score enregistré")
         restartGame()
+        setLoading(false)
     };
 
     useEffect(() => {
-        
+
         const fetchScores = async () => {
             try {
                 const response = await fetch('/api/score/champion', {
@@ -147,7 +151,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
 
             return () => clearInterval(interval);
         }
-    }, [gameStarted, paused, greenBoxImageUrls,popFrequency]);
+    }, [gameStarted, paused, greenBoxImageUrls, popFrequency]);
 
     useEffect(() => {
         if (gameStarted && !paused) {
@@ -159,7 +163,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                     }))
                 );
             }, 5);
-            setPopFrequency(prev=>prev*0.8)
+            setPopFrequency(prev => prev * 0.8)
             return () => clearInterval(moveInterval);
         }
     }, [gameStarted, speed, paused]);
@@ -400,7 +404,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                         {scores.length > 0 ? (
                             scores?.slice(0, 3).map((score: any) => (
                                 <div key={score.pseudo}>
-                                        <p className="flex flex-row gap-2"><Trophy className="size-4"/> {score.pseudo}: {score.score} pts</p>
+                                    <p className="flex flex-row gap-2"><Trophy className="size-4" /> {score.pseudo}: {score.score} pts</p>
                                 </div>
                             ))
                         ) : (
@@ -415,12 +419,22 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                             value={pseudo} // Bind input value to state
                             onChange={(e) => setPseudo(e.target.value)} // Update state on input change
                         />
-                        <button
+                        {loading ? <button
                             onClick={() => sendScore({ pseudo, champion: "jacqueslalie", score })} // Send the state values
                             className="mt-2 p-2 bg-green-500 rounded"
                         >
                             Enregistrer
-                        </button>
+                        </button> :
+                            <Oval
+                                visible={true}
+                                height="80"
+                                width="80"
+                                color="#4fa94d"
+                                ariaLabel="oval-loading"
+                                wrapperStyle={{}}
+                                wrapperClass=""
+                            />
+                        }
                     </div>
                 </div>
             )}
