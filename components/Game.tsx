@@ -413,7 +413,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                             <p>No scores found.</p>
                         )}
                     </div>
-                    <div className="mt-6 border-t-2 border-white pt-4 flex flex-col text-md justify-center items-center">
+                    <div className="mt-6 border-t-2 border-white pt-4 flex flex-col text-md justify-center items-center gap-1">
                         Enregistrez votre score
                         <input
                             className="border-2 rounded-md p-2 text-black"
@@ -421,7 +421,7 @@ const Game: React.FC<GameProps> = ({ greenBoxImageUrls }) => {
                             value={pseudo} // Bind input value to state
                             onChange={(e) => setPseudo(e.target.value)} // Update state on input change
                         />
-                        {loading ? <button
+                        {!loading ? <button
                             onClick={() => sendScore({ pseudo, champion: "jacqueslalie", score })} // Send the state values
                             className="mt-2 p-2 bg-green-500 rounded"
                         >
